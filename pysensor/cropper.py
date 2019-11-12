@@ -1,13 +1,13 @@
 import cv2
 import threading
 import numpy as np
-import Queue
+import queue
 from threading import Thread
-from croprecognizer import CropRecognizer
+from pysensor.croprecognizer import CropRecognizer
 from multiprocessing.pool import ThreadPool
 
-def createRecognizerThread(myCrop,myId):
-    cropRec = CropRecognizer(crop=myCrop, cropId =myId)
+def createRecognizerThread(myCrop):
+    cropRec = CropRecognizer(crop=myCrop, cropId =0)
     result = cropRec.describe()
     return result
 
@@ -24,15 +24,19 @@ class Cropper():
         resized = cv2.resize(self.frame,dim,interpolation= cv2.INTER_AREA)
 
         rets = np.load("Camera"+str(self.cameraId)+"Coords.npy")
+        print(rets)
         pool = ThreadPool(processes= len(rets))
 
-        que = Queue.Queue()
+        que = queue.Queue()
         results=[]
         i=0
         for r in rets:
+            if r[1]==0 & r[2]==0 & r[3]==0 & r[0]==0:
+                continue
+                
             i=i+1
             imCrop = resized[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
-            thread = Thread(target= lambda q, arg1: q.put(createRecognizerThread(arg1)),args=(que,imCrop,i))
+            thread = Thread(target= lambda q, arg1: q.put(createRecognizerThread(arg1)),args=(que,imCrop))
             thread.start()
             thread.join()
             result = que.get()

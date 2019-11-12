@@ -12,8 +12,9 @@ def getCropperResults(camFrame,camId):
     return results
 
 def initProducer(server):
-    prod = KProducer(servers = server)
-    return prod
+   # prod = KProducer(servers = server)
+   # return prod
+   return True
 
 def initCamera():
     cap = cv2.VideoCapture(0)
@@ -31,6 +32,7 @@ def jsonMaker(results):
 
 def main():
 
+
     ap = argparse.ArgumentParser()
     ap.add_argument("-s","--server", required=False,
                     help="Server Bootstrap do kafka")
@@ -47,8 +49,8 @@ def main():
           while(cam.isOpened()):
              # cv2.waitKey(8000)
               ret,img = cam.read()
-             # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-             # gray = cv2.flip(img,1)
+              gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+              gray = cv2.flip(img,1)
               print("frame captured")
               ratio = 400.0/ img.shape[1]
               dim = (400, int(img.shape[0] *ratio))
@@ -58,7 +60,8 @@ def main():
               results = getCropperResults(gray,0)
               if results:
                   print("printing results")
-                  producer.sendData(data=results, topic=args["topic"])
+                  print(results)
+                #  producer.sendData(data=results, topic=args["topic"])
               print(results)
              
               if cv2.waitKey(10000) & 0xFF ==ord('q'):

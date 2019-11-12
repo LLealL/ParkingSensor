@@ -1,6 +1,6 @@
 import pickle
 import cv2
-from localbinarypatterns import LocalBinaryPatterns
+from pysensor.localbinarypatterns import LocalBinaryPatterns
 from threading import Thread
 
 class CropRecognizer():
