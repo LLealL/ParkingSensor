@@ -12,9 +12,12 @@ def getCropperResults(camFrame,camId):
     return results
 
 def initProducer(server):
-   # prod = KProducer(servers = server)
-   # return prod
-   return True
+
+    if server:
+        prod = KProducer(servers = server)
+    else:
+        prod = KProducer()
+    return prod
 
 def initCamera():
     cap = cv2.VideoCapture(0)
