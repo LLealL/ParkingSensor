@@ -19,8 +19,8 @@ class Cropper():
         self.cameraId= cameraId
 
     def start(self):
-        ratio = 300.0/self.frame.shape[1]
-        dim = (300,int(self.frame.shape[0] *ratio))
+        ratio = 600.0/self.frame.shape[1]
+        dim = (600,int(self.frame.shape[0] *ratio))
         resized = cv2.resize(self.frame,dim,interpolation= cv2.INTER_AREA)
 
         rets = np.load("Camera"+str(self.cameraId)+"Coords.npy")
@@ -30,17 +30,16 @@ class Cropper():
         que = queue.Queue()
         results=[]
         i=0
-        for r in rets:
-            if r[1]==0 & r[2]==0 & r[3]==0 & r[0]==0:
-                continue
-                
+        for r in rets:           
             i=i+1
             imCrop = resized[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
             thread = Thread(target= lambda q, arg1: q.put(createRecognizerThread(arg1)),args=(que,imCrop))
             thread.start()
             thread.join()
             result = que.get()
-            results.append(result)
+            lotID= "A"+str(i)
+            data = {'id': lotID , 'blocked':result}
+            results.append(data)
             
             print(result)
 
